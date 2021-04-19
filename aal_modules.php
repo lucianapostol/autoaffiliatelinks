@@ -25,9 +25,10 @@ foreach($aalFiles as $aalFile) {
  // order modules
  
 $mnum = count($aalModules);
-while($sw==0) {
+$sw = 0;
+while($sw == 0) {
 	$sw=1;
-	for($i=0;$i<$mnum;$i++) {
+	for($i=0;$i<$mnum-1;$i++) {
 		if($aalModules[$i]->order > $aalModules[$i+1]->order) {
 		
 			$aux = $aalModules[$i];
@@ -40,7 +41,7 @@ while($sw==0) {
 		
 	}	
 	
-}
+} 
 
  
  
@@ -55,7 +56,7 @@ class aalModule
     var $hooks = array();
 	var $order;
 
-	function aalModule($shortname,$nicename, $order = 99) {
+	function __construct($shortname,$nicename, $order = 99) {
 		
 		$this->shortname = $shortname;
 		$this->nicename = $nicename;
@@ -92,7 +93,7 @@ function wpaal_modules() {
                 
 	To add modules, upload the module files into /modules/ subdirectory in wp-auto-affiliate-links/ plugin folder. Once they are uploaded, every module will create a link into the Wp Auto Affiliate Links top menu. 
 	<br /><br />
-	You can get more modules from <a href="http://autoaffiliatelinks.com">Auto Affiliate Links Modules</a>
+	You can get more modules from <a href="https://autoaffiliatelinks.com">Auto Affiliate Links Modules</a>
 	<br /><br />
 	<h3>Active modules</h3>
 

@@ -21,13 +21,18 @@ function aalGetSugestions($myrows){
 		//print_r($alllinks);
     
         //Search trough your post to generate reccomend most used keywords
-        $searchposts  = get_posts(array('numberposts' => 5,  'post_type'  => 'post'));
+        $wholestring = '';
+        $searchposts  = get_posts(array('numberposts' => 15,  'post_type'  => array('post','page'), 'post_status'      => 'publish'));
         foreach($searchposts as $spost) {
+        	if (strlen($spost->post_content) > 2000)
+ 				  $spost->post_content = substr($spost->post_content, 0, 2000);
                 $wholestring .=  ' '. $spost->post_content;
         }
 
         $wholestring = strip_tags($wholestring);
-        $wholestring = ereg_replace("[^A-Za-z0-9]", " ", $wholestring );
+        $wholestring = preg_replace("/[^A-Za-z0-9]/", " ", $wholestring );
+       // $wholestring = sanitize_text_field($wholestring);
+       // $wholestring = preg_replace("/(\.\?\\\-\+\(\)\{\}\[\]\'\"\:\<\>\=\$\*\^\|;,&%#@\!`)/", " ", $wholestring );
 
         //Replace common words
 			
@@ -36,16 +41,26 @@ function aalGetSugestions($myrows){
 
         //Turning the string into an array
         $karray = explode(" ",strtolower($wholestring));
-        $karray = aal_removenumbers($karray);
-        $karray = aal_removeshortkeys($karray);
+        
+        //remove numbers and short keys
+		foreach($karray as $id => $key) {
+			if(is_numeric($key) || strlen($key)<6) {	
+				unset($karray[$id]);
+			}
+		}
+		
+		$karray = array_values($karray);
+		
 
         //Coountin how many times each keyword appear
         $final=array(); $times=array();
         foreach($karray as $kws) {
 
-                if(!in_array($kws,$final)) if(!in_array($kws,$alllinks)) { 
+                if(!in_array($kws,$final)) {
+                	 if(!in_array($kws,$alllinks)) { 
                         $final[] = $kws;
                         $times[]=1;
+                	}
                 }
                 else{
                         foreach($final as $in => $test) {
@@ -82,12 +97,12 @@ function aalGetSugestions($myrows){
                 }
 
         } */
-        echo '   <a href="javascript:;" id="aal_moresug" >Show suggestions >></a>
+        echo '   <a href="javascript:;" id="aal_moresug" >Show keyword suggestions >></a>
         <div id="aal_extended" style="padding: 20px;">';
         	
-         foreach($extended as $fin) {
+         foreach($extended as $in => $fin) {
                 if($fin!='' && $fin!=' ' && $fin!= '   ') {
-                        echo '<div class="aal_sugbox">'. $fin .'&nbsp;&nbsp;&nbsp;<span><a class="aal_sugkey" href="javascript:;"  title="'. $fin .'">Add >> </a></span></div>';
+                        echo '<div class="aal_sugbox">'. $fin .' ('. $times[$in] .') &nbsp;&nbsp;&nbsp;<span><a class="aal_sugkey" href="javascript:;"  title="'. $fin .'">Add >> </a></span></div>';
                 }
                 
              }       
@@ -131,7 +146,9 @@ function aal_commonwords() {
 function aal_removenumbers($karray) {
 
 	foreach($karray as $id => $key) {
-		if(is_numeric($key))	unset($karray[$id]);
+		if(is_numeric($key)) {	
+			unset($karray[$id]);
+		}
 	}
 	
 	$karray = array_values($karray);
@@ -142,7 +159,8 @@ function aal_removenumbers($karray) {
 function aal_removeshortkeys($karray) {
 
 	foreach($karray as $id => $key) {
-		if(strlen($key)<6)	unset($karray[$id]);
+		if(strlen($key)<6)	
+			unset($karray[$id]);
 	}
 	
 	$karray = array_values($karray);
@@ -150,6 +168,40 @@ function aal_removeshortkeys($karray) {
 	return $karray;
 }
 
+
+function aal_keyscmp($a, $b) {
+		 if (str_word_count($a) == str_word_count($b)) {
+		  	if(strlen($a) == strlen($b)) {
+		  		return 0;
+		  	}
+		  	else {
+		  		if(strlen($a)>strlen($b)) return -1;
+		  		else return 1;	
+		  	}
+  			  }
+  			  else {
+  			  	if(str_word_count($a) > str_word_count($b)) return -1;
+  			  	else return 1;	  	
+  			  }
+}	
+
+
+
+function aal_add_http($url) {
+    if (!preg_match("~^(?:f|ht)tps?://~i", $url)) {
+        $url = "http://" . $url;
+    }
+    return $url;
+}
+
+
+function aal_get_host_from_parse($url){
+    if(strpos($url,"://")===false && substr($url,0,1)!="/") $url = "http://".$url;
+    $info = parse_url($url);
+    if($info)
+   	if(isset($info['host'])) 
+   		return $info['host'];
+}
 
 
 ?>

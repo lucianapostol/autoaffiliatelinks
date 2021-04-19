@@ -10,28 +10,24 @@ jQuery(document).ready(function() {
 	aalapidata = { apikey: apikey };
   jQuery.ajax({
                     type: "GET",
-                    url: "http://autoaffiliatelinks.com/api/getlinks.php",
+                    url: "//autoaffiliatelinks.com/api/getlinks.php",
                     data: aalapidata,
                     cache: false,
                     success: function(returned){
-                    //console.log('succes');   
-                    
-             
-                   
+                   // console.log('succes');         
                    
                   console.log(returned);
                     
 						var larray = jQuery.parseJSON(returned);
-
-	
-
-	
+						//console.log(larray);
+					if (typeof larray.links !== 'undefined') {
 						larray.links.forEach(function(entry) {
 							
 							var kwlist = '';
 					if (typeof entry.keywords !== 'undefined') {
    
 					var keywords = jQuery.parseJSON(entry.keywords);
+							if(keywords.constructor !== Array)  keywords = keywords.links;
 							if(keywords.constructor === Array) 
 								keywords.forEach(function(keyword) {
 								
@@ -43,25 +39,29 @@ jQuery(document).ready(function() {
 							});
 							
 						}
-						if(kwlist=='') kwlist = 'No links displayed for thsi post';
+						if(kwlist=='') kwlist = 'No links displayed for this post';
 
 	    
 					var tr = document.createElement('tr');
 					var td1 = document.createElement('td'); td1.innerHTML = '<a href="' + entry.url + '">' + entry.url + '</a>'; tr.appendChild(td1);	
 					var td2 = document.createElement('td'); td2.innerHTML = kwlist; tr.appendChild(td2);
 					var td3 = document.createElement('td'); td3.innerHTML = ''; tr.appendChild(td3);
-
-	
-					
+			
 					
 					table.appendChild(tr);	    
 	    
 	    
-	    
-	    
 						});
-	
-
+						
+					}
+					else {
+						var tr = document.createElement('tr');	
+						var td1 = document.createElement('td'); td1.innerHTML = 'There are no links generated to show here. Please let us know on <a href="https://autoaffiliatelinks.com/support-help/support-contact/">Support page</a>'; 
+						td1.colSpan = "3";						
+						tr.appendChild(td1);
+						table.appendChild(tr);				
+					
+					}
 
                     
      }

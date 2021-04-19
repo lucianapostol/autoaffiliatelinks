@@ -12,7 +12,7 @@ add_action( 'admin_init', 'aal_walmart_register_settings' );
 
 
 function aal_walmart_register_settings() { 
-   register_setting( 'aal_walmart_settings', 'aal_walmartactive' );
+  // register_setting( 'aal_walmart_settings', 'aal_walmartactive' );
    register_setting( 'aal_walmart_settings', 'aal_walmartid' );
 }
 

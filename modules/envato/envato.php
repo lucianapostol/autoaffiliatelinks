@@ -12,7 +12,7 @@ add_action( 'admin_init', 'aal_envato_register_settings' );
 
 
 function aal_envato_register_settings() { 
-   register_setting( 'aal_envato_settings', 'aal_envatoactive' );
+  // register_setting( 'aal_envato_settings', 'aal_envatoactive' );
    register_setting( 'aal_envato_settings', 'aal_envatosite' );
    register_setting( 'aal_envato_settings', 'aal_envatoid' );
 }

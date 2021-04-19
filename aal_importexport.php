@@ -11,6 +11,10 @@ function wpaal_import_export() {
 <div class="wrap">  
         <div class="icon32" id="icon-options-general"></div>  
         
+                <h2>Import/Export</h2>
+  				<br />
+				<br />        
+        
         
                 <h2>Import Links</h2>
   				<br />
@@ -19,16 +23,23 @@ function wpaal_import_export() {
 				<br />
 				<br />
 				
+			<?php 
+			global $aal_import_error;			
+			if(isset($aal_import_error)) echo $aal_import_error; ?>
 				
 			<form name="aal_import_form" method="post" enctype="multipart/form-data" onsubmit="">
 			Upload the file here:    <input name="aal_import_file" type="file" /><br />
 			Separator: <select name="aal_import_separator" onchange="if(document.aal_import_form.aal_import_separator.options[document.aal_import_form.aal_import_separator.selectedIndex].value == 'other') document.aal_import_form.aal_import_other.style.display = 'block'; else document.aal_import_form.aal_import_other.style.display = 'none';">
 			<option value="|">| ( vertical line )</option>
 			<option value="tab">Tab</option>
-			<option value=",">, ( comma )</option>
+			<option value="," SELECTED>, ( comma )</option>
 			<option value=";">; ( semicolon )</option>
 			<option value=".">. ( dot )</option>
 			<option value="other">other ( specify below )</option>
+			</select><br />
+			Overwrite: <select name="aal_import_overwrite" >
+			<option value="keep">Keep existing links</option>
+			<option value="delete">Delete existing links</option>
 			</select>
 			<br /><input type="text" name="aal_import_other" value="|" style="display: none;"/>
 			<br />
@@ -37,12 +48,11 @@ function wpaal_import_export() {
 				
 				
 	
-	</div>
+
 	
 <br /><br /><br />
 	
-<div class="wrap">  
-        <div class="icon32" id="icon-options-general"></div>  
+ 
         
         
                 <h2>Export Links</h2>
@@ -57,7 +67,7 @@ function wpaal_import_export() {
 			Separator: <select name="aal_export_separator">
 			<option value="|">| ( vertical line )</option>
 			<option value="tab">Tab</option>
-			<option value=",">, ( comma )</option>
+			<option value="," SELECTED >, ( comma )</option>
 			<option value=";">; ( semicolon )</option>
 			<option value=".">. ( dot )</option>
 			</select>
@@ -67,7 +77,7 @@ function wpaal_import_export() {
 		<br />
 		<br />
 		
-<p>If you have problems or questions about the plugin, or if you just want to send a suggestion or request to our team, you can use the <a href="http://wordpress.org/support/plugin/wp-auto-affiliate-links">support forum</a>. Make sure that you consult our <a href="http://wordpress.org/plugins/wp-auto-affiliate-links/faq/">FAQ section</a> first. </p>
+<p>If you have problems or questions about the plugin, or if you just want to send a suggestion or request to our team, you can use the <a href="https://wordpress.org/support/plugin/wp-auto-affiliate-links">support forum</a>. Make sure that you consult our <a href="https://wordpress.org/plugins/wp-auto-affiliate-links/faq/">FAQ section</a> first. </p>
 	
 	</div>
 

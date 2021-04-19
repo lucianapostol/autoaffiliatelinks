@@ -33,6 +33,13 @@ function aalAddLink(){
 		// Security check and sanitize	
 		$aal_link = filter_input(INPUT_POST, 'aal_link', FILTER_SANITIZE_SPECIAL_CHARS); // $_POST['link'];
 		$aal_keywords = filter_input(INPUT_POST, 'aal_keywords', FILTER_SANITIZE_SPECIAL_CHARS); // $_POST['keywords'];
+		$aal_title = filter_input(INPUT_POST, 'aal_title', FILTER_SANITIZE_SPECIAL_CHARS); // $_POST['title'];
+		
+		$aal_link = aal_add_http($aal_link);		
+		
+		$meta = new StdClass();
+		$meta->title = $aal_title;
+		$jmeta = json_encode($meta);
 		
 		$check = $wpdb->get_results( "SELECT * FROM ". $table_name ." WHERE link = '". $aal_link ."' " );		
 		
@@ -42,14 +49,14 @@ function aalAddLink(){
 				$aal_delete_id=$check[0]->id;
 			}
 		else {
-			$rows_affected = $wpdb->insert( $table_name, array( 'link' => $aal_link, 'keywords' => $aal_keywords ) );
+			$rows_affected = $wpdb->insert( $table_name, array( 'link' => $aal_link, 'keywords' => $aal_keywords, 'meta' => $jmeta ) );
 			$aal_delete_id=$wpdb->insert_id;
 		} 
 		
         
                 
                 
-                $aal_json=array('aal_delete_id'=>$aal_delete_id);
+                $aal_json=array( 'aal_delete_id' => $aal_delete_id, 'aal_new_url' => $aal_link );
                 
                 echo json_encode($aal_json);
                 

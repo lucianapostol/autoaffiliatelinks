@@ -12,7 +12,7 @@ add_action( 'admin_init', 'aal_ebay_register_settings' );
 
 
 function aal_ebay_register_settings() { 
-   register_setting( 'aal_ebay_settings', 'aal_ebayactive' );
+   //register_setting( 'aal_ebay_settings', 'aal_ebayactive' );
    register_setting( 'aal_ebay_settings', 'aal_ebayid' );
 }
 

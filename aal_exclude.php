@@ -26,9 +26,7 @@ function aalAddExcludePost(){
                  
                 delete_option('aal_exclude');add_option( 'aal_exclude', $aal_exclude);
                 echo " <div class='aal_excludedcol aal_excludedtitle'><a href='".get_permalink($post->ID)."'>".get_the_title($post->ID)."</a></div>  <div class='aal_excludedcol'>  ". get_post_status($post->ID) ." </div>                           ";
-                
-   
-                 
+                               
                 die();
 }
 
@@ -95,11 +93,14 @@ function wpaal_exclude_posts() {
                 </form>
                 
                 <br />
-                <h4>Excluded Posts ID's</h4>
+                <h4>Excluded Posts</h4>
                 <form class="aal_exclude_posts">
                 <?php 
                 $aal_exclude_posts=get_option('aal_exclude');
                 $aal_exclude_posts_array=explode(',', $aal_exclude_posts);
+                
+                
+                if($aal_exclude_posts_array[0]) {
                 
 ?>
 
@@ -145,8 +146,17 @@ function wpaal_exclude_posts() {
                             <div class='aal_excludedcol'> <a href='javascript:' id='".$aal_exclude_post_id."' class='aal_delete_exclude_link'><img src='".plugin_dir_url(__FILE__)."images/delete.png'/></a></div><br/>
                           </div><div style='clear: both;'></div>";
 					
-				}
+				}	//endforeach
+                
                
+		} // end if
+		else {
+			?>
+				No excluded posts.
+			
+			<?php
+			
+		}
                 
                 ?>
                 </form>
@@ -157,7 +167,7 @@ function wpaal_exclude_posts() {
                 
     <br />
     <br />
-  <p>If you have problems or questions about the plugin, or if you just want to send a suggestion or request to our team, you can use the <a href="http://wordpress.org/support/plugin/wp-auto-affiliate-links">support forum</a>. Make sure that you consult our <a href="http://wordpress.org/plugins/wp-auto-affiliate-links/faq/">FAQ section</a> first. </p>
+  <p>If you have problems or questions about the plugin, or if you just want to send a suggestion or request to our team, you can use the <a href="https://wordpress.org/support/plugin/wp-auto-affiliate-links">support forum</a>. Make sure that you consult our <a href="https://wordpress.org/plugins/wp-auto-affiliate-links/faq/">FAQ section</a> first. </p>
   
   </div>
  

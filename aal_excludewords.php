@@ -8,7 +8,7 @@ add_action('admin_init', 'aal_exclude_words_actions');
  function aal_exclude_words_actions() {
 	global $wpdb;
 	
-		if($_POST['aal_add_exclude_word_check']=='ok') {
+		if(isset($_POST['aal_add_exclude_word_check'])) if($_POST['aal_add_exclude_word_check']=='ok') {
 			
 
 			$word = filter_input(INPUT_POST, 'aal_add_exclude_word', FILTER_SANITIZE_SPECIAL_CHARS); // $_POST['id'];
@@ -26,7 +26,7 @@ add_action('admin_init', 'aal_exclude_words_actions');
 			
 	}
 	
-		if($_POST['aal_excludewordsdeletecheck']=='ok') {
+		if(isset($_POST['aal_excludewordsdeletecheck'])) if($_POST['aal_excludewordsdeletecheck']=='ok') {
 			
 
 			$word = filter_input(INPUT_POST, 'aal_excludewordsdeletekey', FILTER_SANITIZE_SPECIAL_CHARS); // $_POST['id'];
@@ -126,7 +126,7 @@ function wpaal_exclude_words() {
     <br />
     <br /><br />
     <hr />
-  <p>If you have problems or questions about the plugin, or if you just want to send a suggestion or request to our team, you can use the <a href="http://wordpress.org/support/plugin/wp-auto-affiliate-links">support forum</a>. Make sure that you consult our <a href="http://wordpress.org/plugins/wp-auto-affiliate-links/faq/">FAQ section</a> first. </p>
+  <p>If you have problems or questions about the plugin, or if you just want to send a suggestion or request to our team, you can use the <a href="https://wordpress.org/support/plugin/wp-auto-affiliate-links">support forum</a>. Make sure that you consult our <a href="https://wordpress.org/plugins/wp-auto-affiliate-links/faq/">FAQ section</a> first. </p>
   
   </div>
 

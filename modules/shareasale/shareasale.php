@@ -13,7 +13,7 @@ add_action( 'admin_init', 'aal_shareasale_register_settings' );
 
 function aal_shareasale_register_settings() { 
    register_setting( 'aal_shareasale_settings', 'aal_shareasaleid' );
-   register_setting( 'aal_shareasale_settings', 'aal_shareasaleactive' );
+  // register_setting( 'aal_shareasale_settings', 'aal_shareasaleactive' );
 }
 
 function aalShareasaleDisplay() {
@@ -116,7 +116,7 @@ function aalShareasaleActions() {
 	global $wpdb;
 	 $table_name = $wpdb->prefix . "automated_links";
 	
-	if($_POST['aal_shareasaleaction']) {
+	if(isset($_POST['aal_shareasaleaction'])) {
 	
 		$sasid = get_option('aal_shareasaleid');
 		//$scontent = file_get_contents($_FILES['aal_sasfeed']['tmp_name']);

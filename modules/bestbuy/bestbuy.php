@@ -12,7 +12,7 @@ add_action( 'admin_init', 'aal_bestbuy_register_settings' );
 
 
 function aal_bestbuy_register_settings() { 
-   register_setting( 'aal_bestbuy_settings', 'aal_bestbuyactive' );
+   //register_setting( 'aal_bestbuy_settings', 'aal_bestbuyactive' );
    register_setting( 'aal_bestbuy_settings', 'aal_bestbuyid' );
 }
 

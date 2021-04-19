@@ -2,6 +2,8 @@
 
 $aalCustomFeed = new aalModule('customfeed','Custom Feed',23);
 
+//update_option('aal_customfeedactive',1);
+
 
 $aalCustomFeed->aalModuleHook('content','aalCustomFeedDisplay');
 function aalCustomFeedDisplay() {
@@ -51,7 +53,10 @@ add_action('admin_init', 'aalModuleCustomFeedAction');
 function aalModuleCustomFeedAction() {
 global $wpdb;
         $table_name = $wpdb->prefix . "automated_links";
-	if($_POST['aal_import_check']) {
+		if ( !current_user_can("publish_pages") ) return;
+        
+        
+	if(isset($_POST['aal_import_check'])) {
 	
 		//$sasid = filter_input(INPUT_POST, 'aal_sasid', FILTER_SANITIZE_SPECIAL_CHARS);
 		//$scontent = file_get_contents($_FILES['aal_sasfeed']['tmp_name']);
@@ -62,18 +67,51 @@ global $wpdb;
 		if($separator=='other') $separator = $_POST['aal_import_other'];
 		if(!$separator) $separator = "|";
 		
+		$deleted = 1;
+		$import_count = 0;
+		global $aal_import_error;
 		
-		$handle = fopen($_FILES['aal_import_file']['tmp_name'], "r");
-		while (($data = fgetcsv($handle, 1000, $separator)) !== FALSE) {
-		//print_r($data);
-		//$link = str_replace("YOURUSERID", $sasid, $data[4]);
-		$link = $data[1];
-		$keywords = $data[0];
-		if($link && $keywords) $wpdb->insert( $table_name, array( 'link' => $link, 'keywords' => $keywords ) );
+		if($_FILES['aal_import_file']['tmp_name']) {
+			$handle = fopen($_FILES['aal_import_file']['tmp_name'], "r");
+			while (($data = fgetcsv($handle, 1000, $separator,'"')) !== FALSE) {
+			//$link = str_replace("YOURUSERID", $sasid, $data[4]);
+				$title = '';
+				if(array_key_exists(1, $data)) $link = $data[1];
+				if(array_key_exists(0, $data)) $keywords = $data[0];
+				if(array_key_exists(2, $data)) $title = $data[2];
+				if($link && $keywords) {
+					
+					if($deleted == 1 && $_POST['aal_import_overwrite']=='delete') {
+						$deleted = 0;
+						$wpdb->query("TRUNCATE TABLE $table_name");
+					
+					}				
+					
+					$import_count++;
+					$existing = $wpdb->get_results( "SELECT id,link,keywords,meta FROM ". $table_name ." WHERE link = '". $link ."' ");			
+					if(isset($existing[0]) && $existing[0]->link) {
+						if($existing[0]->keywords == $keywords) continue;
+						else {
+							$keywords = $existing[0]->keywords .','. $keywords;
+							$wpdb->query($wpdb->prepare("UPDATE ". $table_name ." SET keywords = '%s' WHERE id = '%d' ",$keywords,$existing[0]->id)); 
+						}
+					}
+					else {
+						$meta = new StdClass();
+						$meta->title = $title;
+						$jmeta = json_encode($meta);
+						$wpdb->insert( $table_name, array( 'link' => $link, 'keywords' => $keywords, 'meta' => $jmeta ) );
+					}
+				}
+			}
+			fclose($handle);
+			$aal_import_error = '<span class="aal_confirmation">'. $import_count .' links imported</span>';		
+			//wp_redirect("admin.php?page=aal_topmenu#aal_panel4");
 		}
-		fclose($handle);
+		else {
+			$aal_import_error = '<span class="aal_error">Please choose a file</span>';		
+		}
 		
-		wp_redirect("admin.php?page=aal_topmenu#aal_panel4");
 		
 		// echo $scontent;
 		

@@ -1,8 +1,15 @@
-jQuery(document).ready(function() { 
+(function($) {
+
+$(document).ready(function() { 
+
+
+	$('#aal_dismiss_link').click(function() {
+	    aalDismiss();
+	});
 
 
     function isValidURL(url){
-    var RegExp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+    var RegExp = /(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 
     if(RegExp.test(url)){
         return true;
@@ -12,52 +19,101 @@ jQuery(document).ready(function() {
 
     }
 
+//Show advanced options
+$("a.aal_form_toggle_advanced").on('click', function() {
+              
+
+			$(".aal_form_advanced_options").toggle();
+			$("a.aal_form_toggle_advanced").toggle();
+
+                return false;
+        }); 
+        
+        
+$("a.aal_edit_show_advanced").on('click', function() {
+              
+
+			$(this).toggle();
+			$(this).parent().find("a.aal_edit_hide_advanced").toggle();
+			$(this).parent().find(".aal_edit_advanced").toggle();
+
+                return false;
+});  
+
+$("a.aal_edit_hide_advanced").on('click', function() {
+              
+
+			$(this).toggle();
+			$(this).parent().find("a.aal_edit_show_advanced").toggle();
+			$(this).parent().find(".aal_edit_advanced").toggle();
+
+                return false;
+});           
+
+
+
 //Delete Link called through AJAX
-jQuery(".aalDeleteLink").live('click',function() {
+$(".aalDeleteLink").on('click', function() {
               
     var answer = confirm("Are you sure you want to delete this automated link?");
     
         if (answer){
         
-        var linkContainer = jQuery(this).parent();
-        var id = jQuery(this).attr("id");
+        var linkContainer = $(this).parent().parent();
+        var id = $(this).attr("id");
         var data = {action: 'aal_delete_link',id: id};
         
-            jQuery.ajax({
+            $.ajax({
                     type: "POST",
                     url: ajax_script.ajaxurl,
                     data: data,
                     cache: false,
                     success: function(){
-                    linkContainer.slideUp('slow', function() {jQuery(this).remove();});
+                    linkContainer.slideUp('slow', function() {$(this).remove();});
                                         }
                 });
         }
 
                 return false;
         }); 
+        
+        
+
+
+
+        
+        
+
 
 // Add Link (Called through AJAX)
 
-    jQuery("#aal_add_new_link_form").submit(function() {
+    $("#aal_add_new_link_form").submit(function() {
         
-        var aal_keywords = jQuery("#aal_formkeywords").val();
-        var aal_link = jQuery("#aal_formlink").val();
+        var aal_keywords = $("#aal_formkeywords").val();
+        var aal_link = $("#aal_formlink").val();
+         var aal_title = $("#aal_formtitle").val();
         
         if(isValidURL(aal_link)){
         
         if(aal_keywords!=''){
         
-            jQuery("#aal_formlink").val("http://");
-            jQuery("#aal_formkeywords").val("");
+				return true;        
+        
+        	
+         /* $("#aal_formlink").val("");
+            $("#aal_formkeywords").val("");
+            $("#aal_formtitle").val("");
+            
+            
 
             var data = {
                         action: 'aal_add_link',
                         aal_link: aal_link,
-                        aal_keywords:aal_keywords
+                        aal_keywords:aal_keywords,
+                        aal_title:aal_title
                        };
 
-            jQuery.ajax({
+            $.ajax({
                     type: "POST",
                     url: ajax_script.ajaxurl,
                     data: data,
@@ -65,45 +121,66 @@ jQuery(".aalDeleteLink").live('click',function() {
                     cache: false,
                     success: function(data){
                         
-                    jQuery(".aal_links").append('<li class="aal_links_box">Link: <input style="margin: 5px 10px;width: 37%;" type="text" name="aal_link" value="'+aal_link+'" />\
-                                                  Keywords: <input style="margin: 5px 10px;width: 20%;" type="text" name="aal_keywords" value="'+aal_keywords+'" /> \
-                                                  <a href="#" id="'+data['aal_delete_id']+'" class="aalDeleteLink"><img src="'+ajax_script.aal_plugin_url+'images/delete.png"/></a>\
+                    $(".aal_links").append('<li class="aal_links_box aal_new_link"><input type="checkbox" name="aal_massids[]" value="' + data['aal_delete_id'] + '" /> Link: <input style="margin: 5px 10px;width: 32%;" type="text" name="aal_link" value="'+ data['aal_new_url'] +'" />\
+                                                  Keywords: <input style="margin: 5px 10px;width: 15%;" type="text" name="aal_keywords" value="'+aal_keywords+'" /> \
+                                                   Title: <input style="margin: 5px 10px;width: 10%;" type="text" name="aal_title" value="'+aal_title+'" /> \
+                       										<a href="javascript:;" id="' + data['aal_delete_id'] + '" class="aalDeleteLink button-primary" onclick="aalOnClickDeleteLink(this,' + data['aal_delete_id'] + ')" >Delete</a> \
                                                 </li>');
+                        //scrool to the added element
+                    		// $('li.aal_new_link')[0].scrollIntoView( true );                        
+                        //show pop-up with confirmation
+                     	$("#aal_addlink_confirmation").show();
 
                     }
 
-               });
+               }); */
             
-            }else alert('Keyword must not be empty');
+            }else {
+            	alert('Keyword must not be empty');
+            	return false;
+            }
        
-        }else alert('Link entered is not valid, it should contain http://');
+        }else {
+        		alert('Link entered is not valid, it should contain http:// or https:// and cannot be blank');
+        		return false;
+        	}
     
         return false;
      }); 
      
 //General Options CHANGE
 
-jQuery("#aal_changeOptions").submit(function() {
+$("#aal_changeOptions").submit(function() {
         
       
         
-            var aal_iscloacked = jQuery("#aal_iscloacked").is(":checked");
-            var aal_langsupport = jQuery("#aal_langsupport").is(":checked");
-            var aal_showhome= jQuery("#aal_showhome").is(":checked");
-            var aal_notimes= jQuery("#aal_notimes").val();
-            var aal_notimescustom= jQuery("#aal_notimescustom").val();
-            var aal_samekeyword= jQuery("#aal_samekeyword").val();
-            var aal_display= jQuery("#aal_display").val();
-            var aal_cssclass= jQuery("#aal_cssclass").val();
-            var aal_target= jQuery('#aal_changeOptions input[type=radio][name=aal_target]:checked').val();
-            var aal_relation= jQuery('#aal_changeOptions input[type=radio][name=aal_relation]:checked').val();
+            var aal_iscloacked = $("#aal_iscloacked").is(":checked");
+            var aal_cloakurl = $("#aal_cloakurl").val();
+            var aal_langsupport = $("#aal_langsupport").is(":checked");
+            var aal_showhome= $("#aal_showhome").is(":checked");
+            var aal_showlist= $("#aal_showlist").is(":checked");
+            var aal_showwidget= $("#aal_showwidget").is(":checked");
+            var aal_showexcerpt= $("#aal_showexcerpt").is(":checked");
+            var aal_showhtags= $("#aal_showhtags").is(":checked");
+            var aal_notimes= $("#aal_notimes").val();
+            var aal_pluginstatus= $("#aal_pluginstatus").val();
+            var aal_notimescustom= $("#aal_notimescustom").val();
+            var aal_samekeyword= $("#aal_samekeyword").val();
+            var aal_samelink= $("#aal_samelink").val();
+            var aal_linkdistribution = $("#aal_linkdistribution").val();
+            var aal_display= $("#aal_display").val();
+            var aal_cssclass= $("#aal_cssclass").val();
+            var aal_target= $('#aal_changeOptions input[type=radio][name=aal_target]:checked').val();
+            var aal_relation= $('#aal_changeOptions input[type=radio][name=aal_relation]:checked').val();
             
+ 
+        
             
             var aal_displayca = [];
             
             
-           jQuery("#aal_changeOptions input#aal_displayc:checkbox:checked").each(function(){
-    			 aal_displayca.push(jQuery(this).val());
+           $("#aal_changeOptions input#aal_displayc:checkbox:checked").each(function(){
+    			 aal_displayca.push($(this).val());
     			//return aal_displayca;
   			  });
   			  
@@ -115,28 +192,38 @@ jQuery("#aal_changeOptions").submit(function() {
             var data = {
                         action: 'aal_change_options',
                         aal_iscloacked: aal_iscloacked,
+                        aal_cloakurl: aal_cloakurl,
                         aal_langsupport: aal_langsupport,
                         aal_showhome:aal_showhome,
+                        aal_showlist:aal_showlist,
+                        aal_showwidget:aal_showwidget,
+                        aal_showexcerpt:aal_showexcerpt,
+                        aal_showhtags:aal_showhtags,
                         aal_notimes:aal_notimes,
                         aal_notimescustom:aal_notimescustom,
                         aal_samekeyword:aal_samekeyword,
+                        aal_samelink:aal_samelink,
+                        aal_linkdistribution:aal_linkdistribution,
                         aal_target:aal_target,
                         aal_relation:aal_relation,
                         aal_display:aal_display,
                         aal_cssclass:aal_cssclass,
+                        aal_pluginstatus:aal_pluginstatus,
                         aal_displayc:aal_displayc
                        };
+                       
+                      console.log(data);
 
-            jQuery.ajax({
+            $.ajax({
                     type: "POST",
                     url: ajax_script.ajaxurl,
                     data: data,
                     cache: false,
                     success: function(){
 
-                     //jQuery(".aal_add_link_status").text('Options Saved');
-							alert("Settings saved");
-	
+                     //$(".aal_add_link_status").text('Options Saved');
+							//alert("Settings saved");
+							$("#aal_settings_confirmation").show();
                     }
 
                });
@@ -147,10 +234,10 @@ jQuery("#aal_changeOptions").submit(function() {
      }); 
  
  
- jQuery("#aal_add_exclude_posts_form").submit(function() {
+ $("#aal_add_exclude_posts_form").submit(function() {
             
             
-            var id = jQuery("#aal_add_exclude_post_id").val();
+            var id = $("#aal_add_exclude_post_id").val();
             
             var data = {
                         action: 'aal_add_exclude_posts',
@@ -158,7 +245,7 @@ jQuery("#aal_changeOptions").submit(function() {
 
                        };
 
-            jQuery.ajax({
+            $.ajax({
                     type: "POST",
                     url: ajax_script.ajaxurl,
                     data: data,
@@ -172,8 +259,8 @@ jQuery("#aal_changeOptions").submit(function() {
  									alert('A posts with the same ID is already excluded'); 
  							}
  							else { 	
-                     jQuery(".aal_exclude_posts").append('<div class="aal_excludeditem"><div class="aal_excludedcol">'+id+'</div>   ' + response + '<div class="aal_excludedcol"><a href="javascript:;" id="'+id+'" class="aal_delete_exclude_link"><img src="'+ajax_script.aal_plugin_url+'images/delete.png"/></a></div><br/></div><div style="clear: both;"></div>');
-                     jQuery(".aal_exclude_status").append('<p><i>Exclude ID added!</i></p>');
+                     $(".aal_exclude_posts").append('<div class="aal_excludeditem"><div class="aal_excludedcol aal_excludedidcol">'+id+'</div>   ' + response + '<div class="aal_excludedcol"><a href="javascript:;" id="'+id+'" class="aal_delete_exclude_link"><img src="'+ajax_script.aal_plugin_url+'images/delete.png"/></a></div><br/></div><div style="clear: both;"></div>');
+                     $(".aal_exclude_status").append('<p><i>Exclude ID added!</i></p>');
                      
                   }
                      
@@ -187,33 +274,33 @@ jQuery("#aal_changeOptions").submit(function() {
      }); 
 
 
-jQuery(".aal_delete_exclude_link").live('click',function() {
+$(".aal_excludedcol").on('click', '.aal_delete_exclude_link', function() {
         
-    var answer = confirm("Are you sure you want to delete this exclude link?");
+    var answer = confirm("Are you sure you want to delete this excluded link?");
     
         if (answer){
         
         //delete selected exclude id box from the form 
-        var linkContainer = jQuery(this).parent().parent();
-        linkContainer.slideUp('slow', function() {jQuery(this).remove();
+        var linkContainer = $(this).parent().parent();
+        linkContainer.slideUp('slow', function() {$(this).remove();
             
 });
         
-        var removeItem=jQuery(this).parent().parent().children(".aal_excludedcol:first-child").text();
+        var removeItem=$(this).parent().parent().children(".aal_excludedcol:first-child").text();
         //console.log(removeItem);
         
         var posts=new Array();
         
         
-        jQuery(".aal_excludeditem").each(function(){
-			//console.log(jQuery(this).children(".aal_excludedcol:first-child").text());
+        $(".aal_excludeditem").each(function(){
+			//console.log($(this).children(".aal_excludedcol:first-child").text());
         	
-            posts.push(jQuery(this).children(".aal_excludedcol:first-child").text());
+            posts.push($(this).children(".aal_excludedcol:first-child").text());
         });
         
         //console.log(posts);
         
-        posts=jQuery.grep(posts,function(value){
+        posts=$.grep(posts,function(value){
             return value!=removeItem;
         });
         
@@ -222,7 +309,7 @@ jQuery(".aal_delete_exclude_link").live('click',function() {
         
         var data = {action: 'aal_update_exclude_posts',aal_exclude_posts:posts};
             
-            jQuery.ajax({
+            $.ajax({
                     type: "POST",
                     url: ajax_script.ajaxurl,
                     data: data,
@@ -244,30 +331,28 @@ jQuery(".aal_delete_exclude_link").live('click',function() {
 
 }); 
 
-function aal_masscomplete() {
 
-		var checkboxes = document.getElementsByName('aal_massids[]');
-		var vals = "";
-		for (var i=0, n=checkboxes.length;i<n;i++) {
-		  if (checkboxes[i].checked) 
-		  {
-		  vals += ","+checkboxes[i].value;
-		  }
-		}
-		if (vals) vals = vals.substring(1);
-	
-	//alert(vals);
-		document.getElementById('aal_massstring').value = vals;
 
-		return confirm('Are you sure you want to delete all selected links ?');
-		return true;
-}
+var aal_selectclicked = false;
 
-jQuery( document ).ready(function() {
- jQuery('#aal_selectall').click( function () {
-    jQuery('#aal_panel3 :checkbox').each(function() {
+$( document ).ready(function() {
+ $('#aal_selectall').click( function () {
+ 	
+ 	if(aal_selectclicked) {
+		aal_selectclicked = false; 	
+		$('#aal_panel3 :checkbox').each(function() {
+          this.checked = false;
+     	 });
+     	 $(this).val('Select all');
+     }
+     else {
+     	
+ 		 aal_selectclicked = true;
+   		 $('#aal_panel3 :checkbox').each(function() {
           this.checked = true;
-      });
+     	 });
+     	 $(this).val('Deselect all');
+     }
   });
 
 	return false;
@@ -275,29 +360,11 @@ jQuery( document ).ready(function() {
 
 
 
-//Frequency selector, display custom value
-function aalFrequencySelector() {
-	
-	var es = document.getElementById('aal_notimes');
-	//alert(es.options[es.selectedIndex].value);
-
-	if(es.options[es.selectedIndex].value == 'custom') { 
-	
-		document.getElementById('aal_custom_frequency').style.display = 'block';
-		
-	}
-	else {
-		document.getElementById('aal_custom_frequency').style.display = 'none';
-	}
-	
-
-}
-
 
 
 //show custom links
 
-jQuery(document).ready(function() {
+$(document).ready(function() {
       canvas = document.getElementById('aalshowcustomlinks');
       if(canvas) { 
       	apikey = canvas.getAttribute('data-apikey');
@@ -305,9 +372,9 @@ jQuery(document).ready(function() {
       
 		apidata = { network: network, apikey: apikey };
 
-	jQuery.ajax({
+	$.ajax({
          type: "GET",
-         url: "http://autoaffiliatelinks.com/api/getcustomlinks.php",
+         url: "//autoaffiliatelinks.com/api/getcustomlinks.php",
          data: apidata,
          cache: false,
          success: function(returned){
@@ -324,12 +391,12 @@ jQuery(document).ready(function() {
          		return false;
 				}	                    
                   
-				var farray = jQuery.parseJSON(returned);
+				var farray = $.parseJSON(returned);
 				//console.log(farray.list.q);
 				//console.log(farray);
 
 				if(!farray.number) {
-					canvas.innerHTML = 'Sorry, no results matched your search query';	         		
+					canvas.innerHTML = 'There are no links to be displayed';	         		
          		return false;			
 				}
 
@@ -374,6 +441,122 @@ jQuery(document).ready(function() {
 });
 
 
+//AAL javascript code for keyword suggestions
+
+$(document).ready(function() {
+	$(".aal_sugkey").click(function() { 
+ 		if($("#aal_formkeywords").val())  {
+ 				$("#aal_formkeywords").val($("#aal_formkeywords").val() + ", " + $(this).attr("title"));
+ 			}
+ 			else { 
+ 				$("#aal_formkeywords").val($(this).attr("title"));
+ 		}
+ 		$(window).scrollTop(0);
+		$("#aal_formkeywords").addClass( "yellowhighlight" );
+ 		$(this).hide();
+	});
+
+
+	$("#aal_moresug").click(function() {
+ 		$("#aal_extended").toggle();
+	});
+
+});
+
+
+
+//Aal notice dismiss function
+	function aalDismiss() {
+
+
+        var data = {action: 'aal_dismiss_notice'};
+        
+            $.ajax({
+                    type: "POST",
+                    url: ajax_script.ajaxurl,
+                    data: data,
+                    cache: false,
+                    success: function(){
+                    $("#aal_notice_div").slideUp('slow', function() {$("#aal_notice_div").remove();});
+                                        }
+                });
+        	
+		
+		
+	}
+	
+	
+	
+
+	
+})(jQuery);
+
+
+
+        
+//Onclick delete function
+function aalOnClickDeleteLink(el,linkid) {
+              
+    var answer = confirm("Are you sure you want to delete this automated link?");
+    
+        if (answer){
+        
+        var linkContainer = jQuery(el.parentNode);
+        var id = linkid
+        var data = {action: 'aal_delete_link',id: id};
+        
+            jQuery.ajax({
+                    type: "POST",
+                    url: ajax_script.ajaxurl,
+                    data: data,
+                    cache: false,
+                    success: function(){
+                    linkContainer.slideUp('slow', function() {jQuery(this).remove();});
+                                        }
+                });
+        }
+
+                return false;
+        }
+
+function aal_masscomplete() {
+
+		var checkboxes = document.getElementsByName('aal_massids[]');
+		var vals = "";
+		for (var i=0, n=checkboxes.length;i<n;i++) {
+		  if (checkboxes[i].checked) 
+		  {
+		  vals += ","+checkboxes[i].value;
+		  }
+		}
+		if (vals) vals = vals.substring(1);
+	
+	
+		document.getElementById('aal_massstring').value = vals;
+
+		return confirm('Are you sure you want to delete all selected links ?');
+}
+
+
+//Frequency selector, display custom value
+function aalFrequencySelector() {
+	
+	var es = document.getElementById('aal_notimes');
+	
+
+	if(es.options[es.selectedIndex].value == 'custom') { 
+	
+		document.getElementById('aal_custom_frequency').style.display = 'block';
+		
+	}
+	else {
+		document.getElementById('aal_custom_frequency').style.display = 'none';
+	}
+	
+
+}
+
+
 
 function aalCustomLinkDelete(linkid) {
 	var answer = confirm("Are you sure you want to delete this link  ?")
@@ -389,7 +572,7 @@ function aalCustomLinkDelete(linkid) {
 
 	jQuery.ajax({
          type: "GET",
-         url: "http://autoaffiliatelinks.com/api/deletecustomlinks.php",
+         url: "//autoaffiliatelinks.com/api/deletecustomlinks.php",
          data: apidata,
          cache: false,
          success: function(returned){
@@ -406,7 +589,7 @@ function aalCustomLinkDelete(linkid) {
          		return false;
 				}	                    
                   
-				//var farray = jQuery.parseJSON(returned);
+				//var farray = $.parseJSON(returned);
 
 
 					
@@ -435,8 +618,6 @@ function aalCustomLinkDelete(linkid) {
 
 
 
-
-
 function aalCustomLinkDeleteAll() {
 
 var answer = confirm("Are you sure you want to delete all the links below  ?")
@@ -452,7 +633,7 @@ var answer = confirm("Are you sure you want to delete all the links below  ?")
 
 	jQuery.ajax({
          type: "GET",
-         url: "http://autoaffiliatelinks.com/api/deletecustomlinks.php",
+         url: "//autoaffiliatelinks.com/api/deletecustomlinks.php",
          data: apidata,
          cache: false,
          success: function(returned){
@@ -469,7 +650,7 @@ var answer = confirm("Are you sure you want to delete all the links below  ?")
          		return false;
 				}	                    
                   
-				//var farray = jQuery.parseJSON(returned);
+				//var farray = $.parseJSON(returned);
 
 
 					
@@ -501,47 +682,33 @@ var answer = confirm("Are you sure you want to delete all the links below  ?")
 
 
 
+function aalActivateModule(name) {
 
-//AAL javascript code for keyword suggestions
+	document.forms["aal_apikey_form"][name].selectedIndex = 1;
+	document.createElement('form').submit.call(document.forms["aal_apikey_form"]);
+	return false;
 
-jQuery(document).ready(function() {
-	jQuery(".aal_sugkey").click(function() { 
- 		if(jQuery("#aal_formkeywords").val())  {
- 				jQuery("#aal_formkeywords").val(jQuery("#aal_formkeywords").val() + ", " + jQuery(this).attr("title"));
- 			}
- 			else { 
- 				jQuery("#aal_formkeywords").val(jQuery(this).attr("title"));
- 		}
- 		jQuery(window).scrollTop(0);
-		jQuery("#aal_formkeywords").addClass( "yellowhighlight" );
- 		jQuery(this).hide();
-	});
+}
 
 
-	jQuery("#aal_moresug").click(function() {
- 		jQuery("#aal_extended").toggle();
-	});
+	
+function aalCopyCloak(el) {
+ 
+ 
+  var id = el.getAttribute('data-id');
+  document.getElementById("edit_advanced_" + id).style.display = "block";
+  var cloak = document.getElementById("aal-cloak-" + id);
 
-});
+  /* Select the text field */
+  cloak.select();
+  cloak.setSelectionRange(0, 99999); /*For mobile devices*/
+
+  /* Copy the text inside the text field */
+  document.execCommand("copy");
+
+  /* Alert the copied text */
+  alert("Copied the link: " + cloak.value);
+}
 
 
 
-//Aal notice dismiss function
-	function aalDismiss() {
-
-
-        var data = {action: 'aal_dismiss_notice'};
-        
-            jQuery.ajax({
-                    type: "POST",
-                    url: ajax_script.ajaxurl,
-                    data: data,
-                    cache: false,
-                    success: function(){
-                    jQuery("#aal_notice_div").slideUp('slow', function() {jQuery("#aal_notice_div").remove();});
-                                        }
-                });
-        	
-		
-		
-	}
